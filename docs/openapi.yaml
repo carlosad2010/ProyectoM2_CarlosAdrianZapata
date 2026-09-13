@@ -10,7 +10,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Desarrollo local
-  - url: https://blog-api-production.up.railway.app
+  - url: https://proyectom2carlosadrianzapata-production.up.railway.app/
     description: Producción
 
 paths:
