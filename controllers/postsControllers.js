@@ -43,6 +43,26 @@ try {
   }
 };
 
+
+//posts con detalle de su author
+export const getPostByAuthorId = async (req, res) => {
+try {
+    const result = await pool.query(
+      `SELECT title,content,name,email FROM posts as p 
+      INNER JOIN authors a ON p.author_id = a.id WHERE a.id = $1`,[req.params.authorId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Post con este autor no encontrado' });
+    }
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error obteniendo post para este autor:', error);
+    res.status(500).json({ error: 'Error obteniendo post del autor' });
+  }
+};
+
 //Crear un nuevo post
 export const createPost = async (req, res) => {
       const { title, content, author_id, published } = req.body;

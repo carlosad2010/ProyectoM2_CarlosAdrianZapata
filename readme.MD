@@ -11,6 +11,7 @@ Una API REST completa y profesional construida con **Node.js**, **Express** y **
 - [Tests](#tests)
 - [Documentación API](#documentación-api)
 - [Endpoints](#endpoints)
+- [Ejemplos Visuales de Endpoints](#ejemplos-visuales-de-endpoints)
 - [Despliegue en Railway](#despliegue-en-railway)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Tecnologías](#tecnologías)
@@ -199,9 +200,49 @@ La especificación completa está en `docs/openapi.yaml` (OpenAPI 3.0.3)
 |--------|------|-------------|-----------|
 | `GET` | `/api/posts` | Obtener todos los posts | - |
 | `GET` | `/api/posts/{id}` | Obtener un post por ID | `id` (requerido) |
+| `GET` | `/api/posts/author/{authorId}` | Posts de un autor específico | `authorId` (requerido) |
 | `POST` | `/api/posts` | Crear nuevo post | Body: `title`, `content`, `author_id`, `published` |
 | `PUT` | `/api/posts/{id}` | Actualizar post | `id` (requerido), Body: campos a actualizar |
 | `DELETE` | `/api/posts/{id}` | Eliminar post | `id` (requerido) |
+
+## 📸 Ejemplos Visuales de Endpoints
+
+### 👥 Endpoints de Autores
+
+#### GET - Obtener todos los autores
+![GET /api/authors](./img/getAuthors.png)
+
+#### GET - Obtener autor por ID
+![GET /api/authors/:id](./img/getAuthorsById.png)
+
+#### POST - Crear nuevo autor
+![POST /api/authors](./img/createAuthors.png)
+
+#### PUT - Actualizar autor
+![PUT /api/authors/:id](./img/updateAuthor.png)
+
+#### DELETE - Eliminar autor
+![DELETE /api/authors/:id](./img/deleteAuthor.png)
+
+### 📝 Endpoints de Posts
+
+#### GET - Obtener todos los posts
+![GET /api/posts](./img/getPosts.png)
+
+#### GET - Obtener post por ID
+![GET /api/posts/:id](./img/getPostsById.png)
+
+#### GET - Obtener posts de un autor
+![GET /api/posts/author/:authorId](./img/getPostsByAuthorId.png)
+
+#### POST - Crear nuevo post
+![POST /api/posts](./img/createPost.png)
+
+#### PUT - Actualizar post
+![PUT /api/posts/:id](./img/updatePost.png)
+
+#### DELETE - Eliminar post
+![DELETE /api/posts/:id](./img/deletePost.png)
 
 ### 📌 Ejemplos de Uso
 
