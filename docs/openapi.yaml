@@ -1,4 +1,4 @@
-openapi: 3.1.1
+openapi: 3.0.3
 info:
   title: Blog API
   version: 1.0.0
@@ -14,7 +14,7 @@ servers:
     description: Producción
 
 paths:
-  /authors:
+  /api/authors:
     get:
       summary: Obtener todos los autores
       description: Devuelve la lista completa de autores ordenados por nombre
@@ -29,7 +29,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Author'
-        
         '500':
           description: Error del servidor
           content:
@@ -68,8 +67,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Author'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: El email ya está registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
-  /authors/{id}:
+  /api/authors/{id}:
     get:
       summary: Obtener un autor por ID
       tags:
@@ -88,7 +105,301 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Author'
-      
+        '404':
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Actualizar un autor
+      tags:
+        - Autores
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del autor
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Nombre completo del autor
+                email:
+                  type: string
+                  format: email
+                  description: Email del autor
+                bio:
+                  type: string
+                  description: Biografía del autor
+      responses:
+        '200':
+          description: Autor actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '400':
+          description: ID del autor es requerido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: El email ya está registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Eliminar un autor
+      tags:
+        - Autores
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del autor
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Autor eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/posts:
+    get:
+      summary: Obtener todos los posts
+      description: Devuelve la lista completa de posts
+      tags:
+        - Posts
+      responses:
+        '200':
+          description: Lista de posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Crear un nuevo post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - content
+                - author_id
+              properties:
+                title:
+                  type: string
+                  description: Título del post
+                content:
+                  type: string
+                  description: Contenido del post
+                author_id:
+                  type: integer
+                  description: ID del autor
+                published:
+                  type: boolean
+                  description: Estado de publicación (opcional)
+      responses:
+        '201':
+          description: Post creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/posts/{id}:
+    get:
+      summary: Obtener un post por ID
+      tags:
+        - Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del post
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Actualizar un post
+      tags:
+        - Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del post
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Título del post
+                content:
+                  type: string
+                  description: Contenido del post
+                published:
+                  type: boolean
+                  description: Estado de publicación
+      responses:
+        '200':
+          description: Post actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: ID del post es requerido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Post no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Eliminar un post
+      tags:
+        - Posts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del post
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post eliminado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Post no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Author:
@@ -111,7 +422,30 @@ components:
           type: string
           format: date-time
           description: Fecha de creación
-      
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del post
+        title:
+          type: string
+          description: Título del post
+        content:
+          type: string
+          description: Contenido del post
+        author_id:
+          type: integer
+          description: ID del autor
+        published:
+          type: boolean
+          description: Estado de publicación
+        created_at:
+          type: string
+          format: date-time
+          description: Fecha de creación
+
     Error:
       type: object
       properties:

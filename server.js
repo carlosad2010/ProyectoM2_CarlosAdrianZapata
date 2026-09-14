@@ -3,6 +3,10 @@ import express from 'express';
 import authorsRouter from './routes/authors.js';
 import postsRouter from './routes/posts.js';
 
+import  swaggerUi from 'swagger-ui-express';
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./docs/openapi.yaml');
+
 if (process.env.NODE_ENV !== 'production') {
   loadEnvFile('.env');
 }
@@ -16,6 +20,7 @@ app.use(express.json());
 // Rutas
  app.use('/api/authors', authorsRouter);
  app.use('/api/posts', postsRouter);
+ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Ruta raíz
 app.get('/', (req, res) => {
