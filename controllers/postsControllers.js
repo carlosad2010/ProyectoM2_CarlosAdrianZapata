@@ -45,7 +45,7 @@ try {
 
 
 //posts con detalle de su author
-export const getPostByAuthorId = async (req, res) => {
+export const getPostByAuthorId = async (req, res,next) => {
 try {
     const result = await pool.query(
       `SELECT title,content,name,email FROM posts as p 
@@ -59,18 +59,19 @@ try {
     res.json(result.rows);
   } catch (error) {
     console.error('Error obteniendo post para este autor:', error);
-    res.status(500).json({ error: 'Error obteniendo post del autor' });
+    next(error);
   }
 };
 
 //Crear un nuevo post
-export const createPost = async (req, res) => {
+export const createPost = async (req, res,next) => {
       const { title, content, author_id, published } = req.body;
       
       if (!title || !content || !author_id) {
         return res.status(400).json({ 
-          error: 'Título, contenido y author_id son requeridos' 
+          error: 'Error creando post: Título, contenido y author_id son requeridos' 
         });
+        console.log('Error creando post: Título, contenido y author_id son requeridos');
       }
       
       try {
@@ -81,13 +82,9 @@ export const createPost = async (req, res) => {
         
         res.status(201).json(result.rows[0]);
       } catch (error) {
-        console.error('Error creando post:', error);
-        
-        if (error.code === '23503') {
-          return res.status(404).json({ error: 'El autor especificado no existe' });
-        }
-        
-        res.status(500).json({ error: 'Error creando post' });
+       
+        next(error);
+
       }
     };
 
