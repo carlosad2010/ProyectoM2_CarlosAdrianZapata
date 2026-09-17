@@ -18,3 +18,15 @@ CREATE TABLE posts (
   FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE
 );
 
+-- Tabla de coments
+CREATE TABLE coments (
+  id SERIAL PRIMARY KEY,
+  content VARCHAR(200) NOT NULL,
+  post_id INTEGER NOT NULL,
+  author_id INTEGER NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE CASCADE,
+  FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+

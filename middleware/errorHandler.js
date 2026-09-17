@@ -11,5 +11,5 @@ export function errorHandler(error, req, res, next) {
   }
 
   // Error por defecto
-  res.status(500).json({ error: "Error interno del servidor" });
+  res.status(500).json({ error: error.message || 'Error interno del servidor' });
 }

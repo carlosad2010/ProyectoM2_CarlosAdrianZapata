@@ -7,6 +7,7 @@
     "test": "vitest  --reporter=verbose",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "conex": "node db/test-connection.js",
     "start": "node index.js",
     "dev": "node --watch --watch index.js"
   },
