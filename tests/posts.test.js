@@ -4,7 +4,13 @@ import app from "../app.js";
 import pool from "../db/config.js";
 
 beforeEach(async () => {
-  await pool.query("TRUNCATE posts RESTART IDENTITY CASCADE");
+  await pool.query("TRUNCATE authors RESTART IDENTITY CASCADE");
+  await pool.query(`
+    INSERT INTO authors (name, email, bio) VALUES
+    ('Ana García', 'ana@example.com', 'Desarrolladora full-stack'),
+    ('Carlos Ruiz', 'carlos@example.com', 'Escritor técnico'),
+    ('María López', 'maria@example.com', 'Ingeniera de software');
+  `);
   await pool.query(`
     INSERT INTO posts (title, content, author_id, published) VALUES
     ('Introducción a Node.js', 'Node.js es un runtime de JavaScript...', 1, true),
