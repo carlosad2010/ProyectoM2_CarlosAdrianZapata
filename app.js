@@ -11,8 +11,21 @@ const swaggerDocument = YAML.load("./docs/openapi.yaml");
 // Middleware
 app.use(express.json());
 
+// Swagger UI lista las operaciones en el orden en que aparecen en el YAML, donde
+// cada ruta agrupa sus propios métodos. Este comparador las reordena por verbo
+// dentro de cada tag: GET, POST, PUT y por último DELETE.
+const swaggerOptions = {
+  swaggerOptions: {
+    operationsSorter: (a, b) => {
+      const orden = { get: 1, post: 2, put: 3, patch: 4, delete: 5 };
+      const porVerbo = orden[a.get("method")] - orden[b.get("method")];
+      return porVerbo !== 0 ? porVerbo : a.get("path").localeCompare(b.get("path"));
+    },
+  },
+};
+
 // Documentación OpenAPI
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 // Ruta raíz - Información de la API
 app.get('/', (req, res) => {
