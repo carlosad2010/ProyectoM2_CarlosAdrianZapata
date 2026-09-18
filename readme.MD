@@ -1,6 +1,6 @@
 # 📚 Blog API - REST API de Gestión de Autores y Posts
 
-Una API REST completa y profesional construida con **Node.js**, **Express** y **PostgreSQL** para la gestión de autores y posts de un blog. Incluye validación robusta, tests unitarios (28 tests), documentación OpenAPI interactiva y despliegue automático en Railway.
+Una API REST completa y profesional construida con **Node.js**, **Express** y **PostgreSQL** para la gestión de autores, posts y comentarios de un blog. Incluye validación robusta, tests unitarios (47 tests), documentación OpenAPI interactiva y despliegue automático en Railway.
 
 ## 📋 Tabla de Contenidos
 
@@ -19,9 +19,10 @@ Una API REST completa y profesional construida con **Node.js**, **Express** y **
 
 ## ✨ Características
 
-✅ **CRUD Completo** - Operaciones completas para Autores y Posts  
+✅ **CRUD Completo** - Operaciones completas para Autores, Posts y Comentarios  
 ✅ **Validación Robusta** - Validación de datos en controladores y middleware  
-✅ **28 Tests Unitarios** - Con Vitest y Supertest (todos pasando ✓)  
+✅ **47 Tests Unitarios** - Con Vitest y Supertest (todos pasando ✓)  
+✅ **Integridad Referencial** - Borrado en cascada entre autores, posts y comentarios  
 ✅ **Documentación OpenAPI** - Especificación completa y Swagger UI interactivo  
 ✅ **Manejo de Errores** - Respuestas HTTP coherentes y descriptivas  
 ✅ **Base de Datos PostgreSQL** - Queries parametrizadas y seguras  
@@ -102,9 +103,18 @@ CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
   title VARCHAR(200) NOT NULL,
   content TEXT NOT NULL,
-  author_id INTEGER NOT NULL REFERENCES authors(id),
+  author_id INTEGER NOT NULL REFERENCES authors(id) ON DELETE CASCADE,
   published BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY,
+  content TEXT NOT NULL,
+  post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  commenter_name VARCHAR(100) NOT NULL,
+  commenter_email VARCHAR(150),
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
@@ -144,7 +154,7 @@ npm test -- --reporter=verbose
 npm run test:coverage
 ```
 
-### Resultados actuales: ✅ 28 Tests Passed
+### Resultados actuales: ✅ 47 Tests Passed
 
 - **Validadores** (11 tests) ✓
   - Validación de emails
@@ -157,10 +167,19 @@ npm run test:coverage
 - **Posts** (1 test de integración) ✓
   - GET /api/posts
 
-- **OpenAPI** (14 tests) ✓
+- **Comentarios** (19 tests de integración) ✓
+  - CRUD completo sobre /api/comments
+  - Filtrado por post
+  - Validación de campos requeridos y de IDs inválidos
+
+- **OpenAPI** (15 tests) ✓
   - Validación de documentación YAML
   - Verificación de esquemas
   - Validación de endpoints
+
+> Los tests de integración comparten una única base de datos, por lo que
+> `vitest.config.js` desactiva `fileParallelism` para que los archivos no
+> se trunquen las tablas entre sí.
 
 ## 📚 Documentación API
 
@@ -205,6 +224,21 @@ La especificación completa está en `docs/openapi.yaml` (OpenAPI 3.0.3)
 | `PUT` | `/api/posts/{id}` | Actualizar post | `id` (requerido), Body: campos a actualizar |
 | `DELETE` | `/api/posts/{id}` | Eliminar post | `id` (requerido) |
 
+### 💬 Comentarios
+
+| Método | Endpoint | Descripción | Parámetros |
+|--------|----------|-------------|------------|
+| `GET` | `/api/comments` | Obtener todos los comentarios | - |
+| `GET` | `/api/comments/{id}` | Obtener un comentario por ID | `id` (requerido) |
+| `GET` | `/api/comments/post/{post_id}` | Comentarios de un post específico | `post_id` (requerido) |
+| `POST` | `/api/comments` | Crear nuevo comentario | Body: `content`, `post_id`, `commenter_name`, `commenter_email` |
+| `PUT` | `/api/comments/{id}` | Actualizar comentario | `id` (requerido), Body: campos a actualizar |
+| `DELETE` | `/api/comments/{id}` | Eliminar comentario | `id` (requerido) |
+
+Los comentarios están pensados para **visitantes del blog**: quien comenta se identifica
+con su nombre y, opcionalmente, su email — no necesita estar registrado como autor.
+Al eliminar un post, sus comentarios se borran en cascada.
+
 ## 📸 Ejemplos Visuales de Endpoints
 
 ### 👥 Endpoints de Autores
@@ -243,6 +277,26 @@ La especificación completa está en `docs/openapi.yaml` (OpenAPI 3.0.3)
 
 #### DELETE - Eliminar post
 ![DELETE /api/posts/:id](./img/deletePost.png)
+
+### 💬 Endpoints de Comentarios
+
+#### GET - Obtener todos los comentarios
+![GET /api/comments](./img/getAllComments.png)
+
+#### GET - Obtener comentario por ID
+![GET /api/comments/:id](./img/getCommentById.png)
+
+#### GET - Obtener comentarios de un post
+![GET /api/comments/post/:post_id](./img/getCommentsByPostId.png)
+
+#### POST - Crear nuevo comentario
+![POST /api/comments](./img/createComment.png)
+
+#### PUT - Actualizar comentario
+![PUT /api/comments/:id](./img/updateComment.png)
+
+#### DELETE - Eliminar comentario
+![DELETE /api/comments/:id](./img/deleteComment.png)
 
 ### 📌 Ejemplos de Uso
 
@@ -624,19 +678,23 @@ blog-api/
 │
 ├── 📂 controllers/                # Lógica de negocio
 │   ├── authorsControllers.js
-│   └── postsControllers.js
+│   ├── postsControllers.js
+│   └── commentsControllers.js
 │
 ├── 📂 routes/                     # Definición de rutas
 │   ├── index.js
 │   ├── authorsRouter.js
-│   └── postsRouters.js
+│   ├── postsRouters.js
+│   └── commentsRouter.js
 │
 ├── 📂 middleware/                 # Middleware personalizado
-│   └── validaParametros.js       # Validación centralizada
+│   ├── validaParametros.js       # Validación centralizada de parámetros
+│   └── errorHandler.js           # Manejo centralizado de errores
 │
 ├── 📂 db/                         # Base de datos
 │   ├── config.js                 # Configuración conexión
 │   ├── setup.sql                 # Crear tablas
+│   ├── seed.sql                  # Datos de ejemplo
 │   └── test-connection.js
 │
 ├── 📂 utils/                      # Funciones utilitarias
@@ -645,10 +703,13 @@ blog-api/
 ├── 📂 docs/                       # Documentación
 │   └── openapi.yaml              # Especificación OpenAPI
 │
+├── 📂 img/                        # Capturas de los endpoints
+│
 ├── 📂 tests/                      # Tests unitarios
 │   ├── validator.test.js
 │   ├── authors.test.js
 │   ├── posts.test.js
+│   ├── comments.test.js
 │   └── openapi.test.js
 │
 └── 📂 Requisitos/                 # Documentación del proyecto
