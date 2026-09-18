@@ -2,9 +2,12 @@ openapi: 3.0.3
 info:
   title: Blog API
   version: 1.0.0
-  description: API REST para gestionar autores, posts y comments de un blog
+  description: |
+    API REST para gestionar autores, posts y comments de un blog.
+
+    Ante cualquier inconveniente, contactar a carlosad@gmail.com
   contact:
-    name: Cualquier inconveniente, contactar a Carlos Adrian Zapata
+    name: Carlos Adrian Zapata
     email: carlosad@gmail.com
 
 servers:

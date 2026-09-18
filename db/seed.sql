@@ -30,5 +30,5 @@ INSERT INTO comments (content, post_id, commenter_name, commenter_email, created
 ('Muy interesante el análisis comparativo', 3, 'Diego Ruiz', 'diego@example.com', NOW() - INTERVAL '2 days'),
 ('Esperaba más detalles sobre rendimiento', 3, 'Sofía Moreno', 'sofía@example.com', NOW() - INTERVAL '1 day'),
 
--- Comentario adicional sin email (para probar campo nullable)
+-- Comentario adicional sin email (para |probar campo nullable)
 ('Comentario anónimo muy útil', 1, 'Visitante Anónimo', NULL, NOW());
