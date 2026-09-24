@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
     endpoints: {
       authors: '/api/authors',
       posts: '/api/posts',
+      comments: '/api/comments',
       documentation: '/api-docs'
     }
   });
