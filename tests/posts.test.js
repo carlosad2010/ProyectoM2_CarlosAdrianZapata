@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterAll } from "vitest";
 import request from "supertest";
-import app from "../app.js";
-import pool from "../db/config.js";
+import app from "../src/app.js";
+import pool from "../src/db/config.js";
 
 beforeEach(async () => {
   await pool.query("TRUNCATE authors RESTART IDENTITY CASCADE");

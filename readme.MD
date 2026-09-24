@@ -74,8 +74,8 @@ NODE_ENV=development
 #### Opción A: Usar scripts SQL
 
 ```bash
-psql -U postgres -f db/setup.sql
-psql -U postgres -d blog_api -f db/seed.sql
+psql -U postgres -f src/db/setup.sql
+psql -U postgres -d blog_api -f src/db/seed.sql
 ```
 
 #### Opción B: Crear manualmente
@@ -90,7 +90,7 @@ CREATE DATABASE blog_api;
 # Usar la base de datos
 \c blog_api
 
-# Crear tablas (copiar contenido de db/setup.sql)
+# Crear tablas (copiar contenido de src/db/setup.sql)
 CREATE TABLE authors (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
@@ -425,8 +425,8 @@ INSERT INTO posts (title, content, author_id, published) VALUES
 
 ```bash
 # Desde la carpeta del proyecto:
-psql -U postgres -f db/setup.sql
-psql -U postgres -d blog_api -f db/seed.sql
+psql -U postgres -f src/db/setup.sql
+psql -U postgres -d blog_api -f src/db/seed.sql
 ```
 
 ### Paso 5: Configurar Variables de Entorno
@@ -454,7 +454,7 @@ NODE_ENV=development
 
 ```bash
 # Prueba la conexión
-node db/test-connection.js
+npm run conex
 
 # Si todo está bien, deberías ver:
 # "✅ Conexión a la base de datos exitosa"
@@ -669,36 +669,38 @@ git push origin main
 
 ```
 blog-api/
-├── 📄 app.js                      # Configuración Express y middleware
-├── 📄 index.js                    # Punto de entrada
 ├── 📄 package.json                # Dependencias y scripts
 ├── 📄 vitest.config.js            # Configuración de tests
 ├── 📄 .env.example                # Plantilla de variables
 ├── 📄 readme.MD                   # Este archivo
 │
-├── 📂 controllers/                # Lógica de negocio
-│   ├── authorsControllers.js
-│   ├── postsControllers.js
-│   └── commentsControllers.js
-│
-├── 📂 routes/                     # Definición de rutas
-│   ├── index.js
-│   ├── authorsRouter.js
-│   ├── postsRouters.js
-│   └── commentsRouter.js
-│
-├── 📂 middleware/                 # Middleware personalizado
-│   ├── validaParametros.js       # Validación centralizada de parámetros
-│   └── errorHandler.js           # Manejo centralizado de errores
-│
-├── 📂 db/                         # Base de datos
-│   ├── config.js                 # Configuración conexión
-│   ├── setup.sql                 # Crear tablas
-│   ├── seed.sql                  # Datos de ejemplo
-│   └── test-connection.js
-│
-├── 📂 utils/                      # Funciones utilitarias
-│   └── validator.js              # Validadores
+├── 📂 src/                        # Código fuente de la aplicación
+│   ├── 📄 app.js                  # Configuración Express y middleware
+│   ├── 📄 index.js                # Punto de entrada
+│   │
+│   ├── 📂 controllers/            # Lógica de negocio
+│   │   ├── authorsControllers.js
+│   │   ├── postsControllers.js
+│   │   └── commentsControllers.js
+│   │
+│   ├── 📂 routes/                 # Definición de rutas
+│   │   ├── index.js
+│   │   ├── authorsRouter.js
+│   │   ├── postsRouters.js
+│   │   └── commentsRouter.js
+│   │
+│   ├── 📂 middleware/             # Middleware personalizado
+│   │   ├── validaParametros.js   # Validación centralizada de parámetros
+│   │   └── errorHandler.js       # Manejo centralizado de errores
+│   │
+│   ├── 📂 db/                     # Base de datos
+│   │   ├── config.js             # Configuración conexión
+│   │   ├── setup.sql             # Crear tablas
+│   │   ├── seed.sql              # Datos de ejemplo
+│   │   └── test-connection.js
+│   │
+│   └── 📂 utils/                  # Funciones utilitarias
+│       └── validator.js          # Validadores
 │
 ├── 📂 docs/                       # Documentación
 │   └── openapi.yaml              # Especificación OpenAPI
@@ -776,7 +778,7 @@ Este proyecto fue desarrollado **principalmente por el desarrollador Carlos Adri
 **Middleware de Validación**
 - Problema: Validación repetida en múltiples endpoints
 - IA sugirió: Crear middleware centralizado
-- Implementación: `middleware/validaParametros.js`
+- Implementación: `src/middleware/validaParametros.js`
 - Stack de IA usado: **Claude Haiku 4.5**
 
 #### ✅ **3. Sugerencias de Mejoras**
@@ -815,17 +817,17 @@ Modelos de Claude AI (Anthropic):
 **Archivos completamente desarrollados por Carlos Adrian Zapata:**
 
 ```
-✅ app.js                          # Configuración Express
-✅ index.js                        # Punto de entrada
-✅ controllers/authorsControllers.js
-✅ controllers/postsControllers.js
-✅ routes/index.js
-✅ routes/authorsRouter.js
-✅ routes/postsRouters.js
-✅ db/config.js                    # Conexión a BD
-✅ db/setup.sql                    # Creación de tablas
-✅ db/seed.sql                     # Datos de ejemplo
-✅ utils/validator.js              # Funciones de validación
+✅ src/app.js                      # Configuración Express
+✅ src/index.js                    # Punto de entrada
+✅ src/controllers/authorsControllers.js
+✅ src/controllers/postsControllers.js
+✅ src/routes/index.js
+✅ src/routes/authorsRouter.js
+✅ src/routes/postsRouters.js
+✅ src/db/config.js                # Conexión a BD
+✅ src/db/setup.sql                # Creación de tablas
+✅ src/db/seed.sql                 # Datos de ejemplo
+✅ src/utils/validator.js          # Funciones de validación
 ✅ tests/validator.test.js
 ✅ tests/authors.test.js
 ✅ tests/posts.test.js
@@ -837,7 +839,7 @@ Modelos de Claude AI (Anthropic):
 **Archivos con Asistencia de IA Significativa:**
 
 ```
-✅ middleware/validaParametros.js  # IA sugirió estructura
+✅ src/middleware/validaParametros.js  # IA sugirió estructura
 ✅ docs/openapi.yaml              # IA generó estructura
 ✅ vitest.config.js               # IA sugirió solución SSL
 ✅ readme.MD                       # IA generó estructura y templates
